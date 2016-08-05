@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use JeroenNoten\LaravelAdminLte\ServiceProvider as AdminLteServiceProvider;
 use JeroenNoten\LaravelCkEditor\ServiceProvider as CkEditorServiceProvider;
+use JeroenNoten\LaravelFormat\ServiceProvider as FormatServiceProvider;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Config;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Migrations;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Views;
@@ -41,6 +42,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->register(AdminLteServiceProvider::class);
         $this->app->register(CkEditorServiceProvider::class);
+        $this->app->register(FormatServiceProvider::class);
     }
 
     protected function path(): string
