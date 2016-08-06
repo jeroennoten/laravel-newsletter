@@ -70,6 +70,12 @@ class NewsletterAdminController extends Controller
         return $this->redirect($newsletter);
     }
 
+    public function preview(Request $request)
+    {
+        $newsletter = new Newsletter($request->all());
+        return view('newsletter::mails.newsletter', compact('newsletter'));
+    }
+
     private function updateNewsletter(Newsletter $newsletter, Request $request)
     {
         $newsletter->update($request->all());

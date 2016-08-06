@@ -75,6 +75,7 @@ class ServiceProvider extends BaseServiceProvider
             $route->get('/create', 'NewsletterAdminController@create')->name('create');
             $route->get('/{newsletter}', 'NewsletterAdminController@show')->name('show');
             $route->post('/', 'NewsletterAdminController@store')->name('store');
+            $route->post('/preview', 'NewsletterAdminController@preview')->name('preview');
             $route->post('/send', 'NewsletterAdminController@storeAndSend')->name('store_and_send');
             $route->post('/{newsletter}', 'NewsletterAdminController@update')->name('update');
             $route->post('/{newsletter}/send', 'NewsletterAdminController@updateAndSend')->name('update_and_send');
