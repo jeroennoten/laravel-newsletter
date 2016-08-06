@@ -120,6 +120,7 @@
         function sync() {
             $('#previewBody').val($('#bodyField').val());
             $('#previewForm').submit();
+            outOfSync = false;
             update = false;
             setTimeout(function () {
                 update = true;
