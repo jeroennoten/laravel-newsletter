@@ -20,6 +20,7 @@
                     <thead>
                     <tr>
                         <th>Onderwerp</th>
+                        <th>Verzendlijst</th>
                         <th>Aanmaakdatum</th>
                         <th>Bewerkingsdatum</th>
                         <th>Verzenddatum</th>
@@ -35,6 +36,9 @@
                                 @else
                                     <em>Geen onderwerp</em>
                                 @endif
+                            </td>
+                            <td>
+                                {{ $newsletter->list->name or '' }}
                             </td>
                             <td>
                                 @if($newsletter['created_at'])
@@ -63,14 +67,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    <div class="box box-primary">
-        <div class="box-header with-border">
-            <h3 class="box-title">Aangemelde e-mailadressen</h3>
-        </div>
-        <div class="box-body">
-            {{ implode(', ', $emails) }}
         </div>
     </div>
 @endsection

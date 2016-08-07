@@ -14,13 +14,21 @@
         <div class="box-header with-border">
             <h3 class="box-title">{{ $newsletter['subject'] }}</h3>
         </div>
-        <div class="box-body">
-            {!! $newsletter['body'] !!}
+        <div class="box-body no-padding">
+            <iframe id="preview"
+                    frameborder="0"
+                    name="preview"
+                    allowtransparency="false"
+                    style="background: #fff; height: 400px; width: 100%;"
+                    src="{{ route('admin.newsletters.show.body', $newsletter) }}"
+            ></iframe>
         </div>
         <div class="box-footer">
             <dl class="no-margin">
+                <dt>Verzendlijst</dt>
+                <dd>{{ $newsletter->list->name ?? '' }}</dd>
                 <dt>Status</dt>
-                <dl class="no-margin">Verzonden</dl>
+                <dd>Verzonden</dd>
             </dl>
         </div>
     </div>

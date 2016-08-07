@@ -1,23 +1,28 @@
 <?php namespace JeroenNoten\LaravelNewsletter;
 
+use GuzzleHttp\Client as Guzzle;
 use Http\Adapter\Guzzle6\Client;
-use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use JeroenNoten\LaravelAdminLte\ServiceProvider as AdminLteServiceProvider;
 use JeroenNoten\LaravelCkEditor\ServiceProvider as CkEditorServiceProvider;
 use JeroenNoten\LaravelFormat\ServiceProvider as FormatServiceProvider;
+use JeroenNoten\LaravelNewsletter\EmailValidation\BriteVerify;
+use JeroenNoten\LaravelNewsletter\Mailgun\CachingMailgun;
+use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Config;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Migrations;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Views;
-use Mailgun\Mailgun;
+use Mailgun\Mailgun as BaseMailgun;
 
 class ServiceProvider extends BaseServiceProvider
 {
     use Views, Config, Migrations;
 
-    public function boot(Registrar $route, Dispatcher $events)
+    public function boot(Router $router, Dispatcher $events)
     {
         $this->loadViews();
 
@@ -29,15 +34,30 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->publishConfig();
         $this->publishMigrations();
-        $this->routes($route);
+        $this->routes($router);
         $this->menu($events);
     }
 
     public function register()
     {
+        $this->app->singleton(BaseMailgun::class, function () {
+            return new BaseMailgun(
+                config('services.mailgun.secret'),
+                new Client()
+            );
+        });
+
         $this->app->singleton(Mailgun::class, function () {
-            $client = new Client();
-            return new Mailgun(config('services.mailgun.secret'), $client);
+            return new Mailgun(
+                app(BaseMailgun::class),
+                config('services.mailgun.domain')
+            );
+        });
+
+        $this->app->singleton(MailgunInterface::class, CachingMailgun::class);
+
+        $this->app->singleton(BriteVerify::class, function () {
+            return new BriteVerify(new Guzzle(), config('newsletter.brite_verify_secret'));
         });
 
         $this->app->register(AdminLteServiceProvider::class);
@@ -55,30 +75,55 @@ class ServiceProvider extends BaseServiceProvider
         return 'newsletter';
     }
 
-    private function routes(Registrar $route)
+    private function routes(Router $router)
     {
-        $route->group([
+        $router->group([
             'prefix' => 'api/newsletter',
             'namespace' => __NAMESPACE__ . '\Http\Controllers',
             'middleware' => 'api',
-        ], function (Registrar $route) {
-            $route->post('members', 'NewsletterController@subscribe');
+        ], function (Router $router) {
+            $router->post('members', 'NewsletterController@subscribe');
         });
 
-        $route->group([
-            'prefix' => 'admin/newsletters',
-            'namespace' => __NAMESPACE__ . '\Http\Controllers',
+        $router->group([
+            'prefix' => 'admin',
+            'namespace' => __NAMESPACE__ . '\Http\Controllers\Admin',
             'middleware' => 'web',
             'as' => 'admin.newsletters.'
-        ], function (Registrar $route) {
-            $route->get('/', 'NewsletterAdminController@index')->name('index');
-            $route->get('/create', 'NewsletterAdminController@create')->name('create');
-            $route->get('/{newsletter}', 'NewsletterAdminController@show')->name('show');
-            $route->post('/', 'NewsletterAdminController@store')->name('store');
-            $route->post('/preview', 'NewsletterAdminController@preview')->name('preview');
-            $route->post('/send', 'NewsletterAdminController@storeAndSend')->name('store_and_send');
-            $route->post('/{newsletter}', 'NewsletterAdminController@update')->name('update');
-            $route->post('/{newsletter}/send', 'NewsletterAdminController@updateAndSend')->name('update_and_send');
+        ], function (Router $router) {
+
+            $router->group([
+                'prefix' => 'newsletters'
+            ], function (Router $router) {
+                $router->get('/', 'Newsletters@index')->name('index');
+                $router->get('/create', 'Newsletters@create')->name('create');
+                $router->get('/{newsletter}', 'Newsletters@show')->name('show');
+                $router->get('/{newsletter}/body', 'Newsletters@body')->name('show.body');
+                $router->post('/', 'Newsletters@store')->name('store');
+                $router->post('/preview', 'Newsletters@preview')->name('preview');
+                $router->post('/send', 'Newsletters@storeAndSend')->name('store_and_send');
+                $router->post('/{newsletter}', 'Newsletters@update')->name('update');
+                $router->post('/{newsletter}/send', 'Newsletters@updateAndSend')->name('update_and_send');
+            });
+
+            $router->group([
+                'prefix' => 'newsletter-lists',
+                'as' => 'lists.'
+            ], function (Router $router) {
+
+                $router->get('/', 'Lists@index')->name('index');
+                $router->get('/create', 'Lists@create')->name('create');
+                $router->post('/', 'Lists@store')->name('store');
+                $router->get('/{list}', 'Lists@show')->name('show');
+                $router->get('/{list}/edit', 'Lists@edit')->name('edit');
+                $router->put('/{list}', 'Lists@update')->name('update');
+                $router->delete('/{list}', 'Lists@destroy')->name('destroy');
+
+                $router->post('/{list}/members', 'Members@store')->name('members.store');
+                $router->delete('/{list}/members/{member}', 'Members@destroy')->name('members.destroy');
+
+            });
+
         });
     }
 
@@ -86,8 +131,11 @@ class ServiceProvider extends BaseServiceProvider
     {
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             $event->menu->add([
-                'text' => 'Nieuwsbrieven',
-                'url' => 'admin/newsletters'
+                'text' => 'Nieuwsbrieven vesturen',
+                'url' => 'admin/newsletters',
+            ], [
+                'text' => 'Verzendlijsten',
+                'url' => 'admin/newsletter-lists',
             ]);
         });
     }

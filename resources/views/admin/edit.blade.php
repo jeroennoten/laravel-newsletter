@@ -16,19 +16,31 @@
                 </div>
                 <div class="box-body">
                     <div class="form-group">
+                        <label class="control-label">Onderwerp</label>
                         <input name="subject"
                                value="{{ old('body', $newsletter->subject) }}"
                                class="form-control"
                                placeholder="Onderwerp"
                         >
                     </div>
+                    <div class="form-group @if($errors->has('list_id')) has-error @endif">
+                        <label class="control-label" for="listIdField">Verzendlijst</label>
+                        <select name="list_id" class="form-control" id="listIdField">
+                            @foreach($lists as $list)
+                                <option value="{{ $list->getId() }}" @if(old('list_id', $newsletter->listId) == $list->getId()) selected @endif>{{ $list->name }}</option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('list_id'))
+                            <span class="help-block">{{ $errors->first('list_id') }}</span>
+                        @endif
+                    </div>
                     <div class="form-group no-margin">
-                <textarea name="body"
-                          class="form-control"
-                          style="height: 300px"
-                          placeholder="Bericht"
-                          id="bodyField"
-                >{{ old('body', $newsletter->body) }}</textarea>
+                        <textarea name="body"
+                                  class="form-control"
+                                  style="height: 300px"
+                                  placeholder="Bericht"
+                                  id="bodyField"
+                        >{{ old('body', $newsletter->body) }}</textarea>
                     </div>
                 </div>
                 <div class="box-footer">
@@ -52,7 +64,12 @@
         </form>
         <div class="preview-container">
             <h4>Voorbeeld:</h4>
-            <iframe id="preview" frameborder="0" name="preview" allowtransparency="false" style="background: #fff"></iframe>
+            <iframe id="preview"
+                    frameborder="0"
+                    name="preview"
+                    allowtransparency="false"
+                    style="background: #fff"
+            ></iframe>
         </div>
     </div>
     <style>
@@ -102,9 +119,11 @@
     @ckeditor
     <form target="preview" method="post" action="{{ route('admin.newsletters.preview') }}" id="previewForm">
         {{ csrf_field() }}
-        <input type="hidden" name="body" id="previewBody">
+        <input type="hidden" name="body" id="previewBody" value="{{ $newsletter->body }}">
     </form>
     <script>
+        $('#previewForm').submit();
+
         var update = true;
         var outOfSync = false;
 

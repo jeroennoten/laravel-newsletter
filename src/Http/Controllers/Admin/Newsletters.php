@@ -1,33 +1,43 @@
 <?php
 
 
-namespace JeroenNoten\LaravelNewsletter\Http\Controllers;
+namespace JeroenNoten\LaravelNewsletter\Http\Controllers\Admin;
 
 
-use Carbon\Carbon;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Routing\Controller;
-use JeroenNoten\LaravelNewsletter\Newsletter;
-use Mail;
-use Mailgun\Mailgun;
-use Redirect;
+use Illuminate\Routing\Redirector;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
+use JeroenNoten\LaravelNewsletter\Models\Newsletter;
 
-class NewsletterAdminController extends Controller
+class Newsletters extends Controller
 {
     private $mailgun;
 
-    public function __construct(Mailgun $mailgun)
-    {
+    private $redirector;
+
+    private $mailer;
+
+    public function __construct(
+        MailgunInterface $mailgun,
+        Redirector $redirector,
+        Mailer $mailer
+    ) {
         $this->middleware('auth');
         $this->mailgun = $mailgun;
+        $this->redirector = $redirector;
+        $this->mailer = $mailer;
     }
 
     public function index()
     {
-        $emails = $this->getEmails();
-        $newsletters = Newsletter::all();
-        return view('newsletter::admin.index', compact('newsletters', 'emails'));
+        $newsletters = Newsletter::all()->map(function (Newsletter $newsletter) {
+            $newsletter->list = $this->mailgun->list($newsletter->listId);
+            return $newsletter;
+        });
+        return view('newsletter::admin.index', compact('newsletters'));
     }
 
     public function create()
@@ -38,10 +48,17 @@ class NewsletterAdminController extends Controller
     public function show(Newsletter $newsletter)
     {
         if ($newsletter->isSent()) {
+            $newsletter->list = $this->mailgun->list($newsletter->listId);
             return view('newsletter::admin.show', compact('newsletter'));
         }
         $new = !$newsletter->exists;
-        return view('newsletter::admin.edit', compact('newsletter', 'new'));
+        $lists = $this->mailgun->lists();
+        return view('newsletter::admin.edit', compact('newsletter', 'new', 'lists'));
+    }
+
+    public function body(Newsletter $newsletter)
+    {
+        return view('newsletter::mails.newsletter', compact('newsletter'));
     }
 
     public function store(Request $request)
@@ -84,41 +101,23 @@ class NewsletterAdminController extends Controller
     private function redirect(Newsletter $newsletter = null)
     {
         if ($newsletter) {
-            return Redirect::route('admin.newsletters.show', $newsletter);
+            return $this->redirector->route('admin.newsletters.show', $newsletter);
         }
-        return Redirect::route('admin.newsletters.index');
+        return $this->redirector->route('admin.newsletters.index');
     }
 
     private function sendNewsletter(Newsletter $newsletter)
     {
         $view = 'newsletter::mails.newsletter';
-        Mail::send($view, compact('newsletter'), function (Message $message) use ($newsletter) {
-            $message->to(config('newsletter.list'));
-            $message->subject($newsletter['subject']);
+        $this->mailer->send($view, compact('newsletter'), function (Message $message) use ($newsletter) {
+            $list = $this->mailgun->list($newsletter->listId);
+            $message->to($list->address);
+            $message->subject($newsletter->subject);
         });
 
         $newsletter->updateSentAt();
         $newsletter->save();
 
         return $this->redirect($newsletter);
-    }
-
-    private function getEmails()
-    {
-        $list = config('newsletter.list');
-        $response = null;
-        $members = [];
-        do {
-            $data = ['subscribed' => 'yes'];
-            if ($response) {
-                $data['address'] = last($response->http_response_body->items)->address;
-                $data['page'] = 'next';
-            }
-            $response = $this->mailgun->get("lists/$list/members/pages", $data);
-            $members = array_merge($members, $response->http_response_body->items);
-        } while ($response->http_response_body->items);
-        return collect($members)->map(function ($member) {
-            return $member->address;
-        })->all();
     }
 }
