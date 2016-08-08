@@ -47,10 +47,17 @@ class Members extends Controller
         $name = $request->input('name');
 
         if (!$this->emailValidator->isValid($email)) {
+            if ($request->wantsJson()) {
+                return ['status' => 'invalid'];
+            }
             return $this->redirector->back()->withInput()->withErrors(['Ongeldig e-mailadres']);
         }
 
         $this->mailgun->addMember($listId, $email, $name);
+
+        if ($request->wantsJson()) {
+            return ['status' => 'ok'];
+        }
         return $this->redirectToList($listId);
     }
 

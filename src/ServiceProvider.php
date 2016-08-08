@@ -15,12 +15,13 @@ use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Config;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Migrations;
+use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\PublicAssets;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Views;
 use Mailgun\Mailgun as BaseMailgun;
 
 class ServiceProvider extends BaseServiceProvider
 {
-    use Views, Config, Migrations;
+    use Views, Config, Migrations, PublicAssets;
 
     public function boot(Router $router, Dispatcher $events)
     {
@@ -31,6 +32,8 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             $viewsPath => base_path("resources/views/vendor/{$this->name()}/mails"),
         ], 'mails');
+
+        $this->publishPublicAssets();
 
         $this->publishConfig();
         $this->publishMigrations();
