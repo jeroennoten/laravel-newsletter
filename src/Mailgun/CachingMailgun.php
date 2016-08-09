@@ -68,11 +68,15 @@ class CachingMailgun implements MailgunInterface
 
     public function addMember($listId, $address, $name)
     {
+        $this->cache->forget('newsletter::lists');
+        $this->cache->forget("newsletter::lists.$listId");
         return $this->mailgun->addMember($listId, $address, $name);
     }
 
     public function deleteMember($listId, $memberAddress)
     {
+        $this->cache->forget('newsletter::lists');
+        $this->cache->forget("newsletter::lists.$listId");
         return $this->mailgun->deleteMember($listId, $memberAddress);
     }
 }
