@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Client as Guzzle;
 use Http\Adapter\Guzzle6\Client;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -13,6 +14,7 @@ use JeroenNoten\LaravelNewsletter\EmailValidation\BriteVerify;
 use JeroenNoten\LaravelNewsletter\Mailgun\CachingMailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
+use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Config;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Migrations;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\PublicAssets;
@@ -21,7 +23,7 @@ use Mailgun\Mailgun as BaseMailgun;
 
 class ServiceProvider extends BaseServiceProvider
 {
-    use Views, Config, Migrations, PublicAssets;
+    use ServiceProviderTraits;
 
     public function boot(Router $router, Dispatcher $events)
     {
@@ -141,5 +143,15 @@ class ServiceProvider extends BaseServiceProvider
                 'url' => 'admin/newsletter-lists',
             ]);
         });
+    }
+
+    /**
+     * Return the container instance
+     *
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        return $this->app;
     }
 }
