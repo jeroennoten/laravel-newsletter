@@ -18,7 +18,7 @@
         "mailgun/mailgun-php": "^2.0",
         "laravel/framework": "^5.2",
         "php-http/guzzle6-adapter": "^1.1",
-        "jeroennoten/laravel-package-helper": "^2.0",
+        "jeroennoten/laravel-package-helper": "^3.0",
         "jeroennoten/laravel-adminlte": "^1.6",
         "jeroennoten/laravel-ckeditor": "^3.0",
         "jeroennoten/laravel-format": "^1.1"
