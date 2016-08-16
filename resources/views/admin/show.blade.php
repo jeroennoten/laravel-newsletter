@@ -7,9 +7,16 @@
 @stop
 
 @section('content')
-    <a href="{{ route('admin.newsletters.index') }}" class="btn btn-primary margin-bottom">
-        <i class="fa fa-arrow-left"></i> Terug
-    </a>
+    <form method="post" action="{{ route('admin.newsletters.store', ['redirect' => 'edit']) }}" class="margin-bottom">
+        {{ csrf_field() }}
+        <input type="hidden" name="subject" value="{{ $newsletter['subject'] }}">
+        <input type="hidden" name="body" value="{{ $newsletter['body'] }}">
+        <input type="hidden" name="list_id" value="{{ $newsletter['list_id'] }}">
+        <a href="{{ route('admin.newsletters.index') }}" class="btn btn-primary">
+            <i class="fa fa-arrow-left"></i> Terug
+        </a>
+        <button type="submit" class="btn btn-success"><i class="fa fa-copy"></i> Dupliceren</button>
+    </form>
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">{{ $newsletter['subject'] }}</h3>

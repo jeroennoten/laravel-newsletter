@@ -116,7 +116,7 @@
 @endsection
 
 @section('js')
-    @ckeditor
+    @ckeditor('bodyField')
     <form target="preview" method="post" action="{{ route('admin.newsletters.preview') }}" id="previewForm">
         {{ csrf_field() }}
         <input type="hidden" name="body" id="previewBody" value="{{ $newsletter->body }}">
@@ -127,7 +127,7 @@
         var update = true;
         var outOfSync = false;
 
-        CKEDITOR.replace('bodyField').on('change', function (e) {
+        CKEDITOR.instances.bodyField.on('change', function (e) {
             e.editor.updateElement();
             if (update) {
                 sync();

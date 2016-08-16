@@ -30,7 +30,7 @@ class Mailgun implements MailgunInterface
         });
     }
 
-    public function list($listId)
+    public function getList($listId)
     {
         try {
             $data = $this->get($this->listPath($listId));

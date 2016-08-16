@@ -5,7 +5,7 @@ interface MailgunInterface
 {
     public function lists();
 
-    public function list($listId);
+    public function getList($listId);
 
     public function addList($name, $description);
 

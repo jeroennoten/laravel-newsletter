@@ -34,7 +34,7 @@ class Newsletters extends Controller
     public function index()
     {
         $newsletters = Newsletter::all()->map(function (Newsletter $newsletter) {
-            $newsletter->list = $this->mailgun->list($newsletter->listId);
+            $newsletter->list = $this->mailgun->getList($newsletter->listId);
             return $newsletter;
         });
         return view('newsletter::admin.index', compact('newsletters'));
@@ -48,7 +48,7 @@ class Newsletters extends Controller
     public function show(Newsletter $newsletter)
     {
         if ($newsletter->isSent()) {
-            $newsletter->list = $this->mailgun->list($newsletter->listId);
+            $newsletter->list = $this->mailgun->getList($newsletter->listId);
             return view('newsletter::admin.show', compact('newsletter'));
         }
         $new = !$newsletter->exists;
@@ -63,8 +63,8 @@ class Newsletters extends Controller
 
     public function store(Request $request)
     {
-        Newsletter::create($request->all());
-        return $this->redirect();
+        $newsletter = Newsletter::create($request->all());
+        return $this->redirect($request->input('redirect') == 'edit' ? $newsletter : null);
     }
 
     public function storeAndSend(Request $request)
@@ -110,7 +110,7 @@ class Newsletters extends Controller
     {
         $view = 'newsletter::mails.newsletter';
         $this->mailer->send($view, compact('newsletter'), function (Message $message) use ($newsletter) {
-            $list = $this->mailgun->list($newsletter->listId);
+            $list = $this->mailgun->getList($newsletter->listId);
             $message->to($list->address);
             $message->subject($newsletter->subject);
         });

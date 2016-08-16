@@ -25,10 +25,10 @@ class CachingMailgun implements MailgunInterface
         });
     }
 
-    public function list($listId)
+    public function getList($listId)
     {
         return $this->cache->rememberForever("newsletter::lists.$listId", function () use ($listId) {
-            return $this->mailgun->list($listId);
+            return $this->mailgun->getList($listId);
         });
     }
 

@@ -8,7 +8,7 @@ class AddListIdColumnToNewslettersTable extends Migration {
     public function up()
     {
         Schema::table('newsletters', function (Blueprint $table) {
-            $table->string('list_id');
+            $table->string('list_id')->nullable();
         });
     }
     

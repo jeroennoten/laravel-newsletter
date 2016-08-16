@@ -37,7 +37,7 @@ class Lists extends Controller
 
     public function show($listId)
     {
-        $list = $this->mailgun->list($listId);
+        $list = $this->mailgun->getList($listId);
         $members = $this->mailgun->members($listId);
         return $this->view->make('newsletter::admin.lists.show', compact('list', 'members'));
     }
@@ -58,7 +58,7 @@ class Lists extends Controller
 
     public function edit($listId)
     {
-        $list = $this->mailgun->list($listId);
+        $list = $this->mailgun->getList($listId);
         return $this->view->make('newsletter::admin.lists.edit', compact('list', 'members'));
     }
 
