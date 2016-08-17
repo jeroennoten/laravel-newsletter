@@ -87,6 +87,12 @@ class Newsletters extends Controller
         return $this->redirect($newsletter);
     }
 
+    public function destroy(Newsletter $newsletter)
+    {
+        $newsletter->delete();
+        return $this->redirect();
+    }
+
     public function preview(Request $request)
     {
         $newsletter = new Newsletter($request->all());

@@ -2,11 +2,13 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailingList;
 
 /**
  * @property mixed subject
  * @property mixed listId
- * @property List list
+ * @property MailingList list
+ * @property mixed id
  */
 class Newsletter extends Model
 {

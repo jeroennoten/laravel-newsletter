@@ -24,6 +24,7 @@
                         <th>Aanmaakdatum</th>
                         <th>Bewerkingsdatum</th>
                         <th>Verzenddatum</th>
+                        <td></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -61,7 +62,18 @@
                                     <em>Nog niet verzonden</em>
                                 @endif
                             </td>
-
+                            <td>
+                                <form method="post"
+                                      action="{{ route('admin.newsletters.destroy', $newsletter) }}"
+                                      onsubmit="return confirm('Weet je zeker dat je deze nieuwsbrief wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.')"
+                                >
+                                    {{ method_field('delete') }}
+                                    {{ csrf_field() }}
+                                    <button id="deleteNewsletter{{ $newsletter->id }}Button" class="btn btn-danger btn-xs">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

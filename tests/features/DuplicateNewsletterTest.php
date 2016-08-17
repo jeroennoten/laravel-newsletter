@@ -10,15 +10,7 @@ class DuplicateNewsletterTest extends TestCase
 {
     public function testDuplicate()
     {
-        $mailgunMock = Mockery::mock(Mailgun::class);
-        $mailgunMock->shouldReceive('getList')->andReturn(new MailingList((object)[
-            'name' => '',
-            'description' => '',
-            'members_count' => '',
-            'address' => '',
-        ]));
-        $mailgunMock->shouldReceive('lists')->andReturn([]);
-        $this->app->instance(MailgunInterface::class, $mailgunMock);
+        $this->mockMailgun();
 
         $newsletter = factory(Newsletter::class)->create(['list_id' => 'mylist']);
 

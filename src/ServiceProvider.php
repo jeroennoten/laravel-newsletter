@@ -109,6 +109,7 @@ class ServiceProvider extends BaseServiceProvider
                 $router->post('/send', 'Newsletters@storeAndSend')->name('store_and_send');
                 $router->post('/{newsletter}', 'Newsletters@update')->name('update');
                 $router->post('/{newsletter}/send', 'Newsletters@updateAndSend')->name('update_and_send');
+                $router->delete('/{newsletter}', 'Newsletters@destroy')->name('destroy');
             });
 
             $router->group([

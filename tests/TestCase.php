@@ -2,6 +2,10 @@
 
 
 use Illuminate\Foundation\Auth\User;
+use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailingList;
+use JeroenNoten\LaravelNewsletter\Models\Newsletter;
 use JeroenNoten\LaravelNewsletter\ServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -38,5 +42,26 @@ class TestCase extends BaseTestCase
     protected function login()
     {
         $this->actingAs(new User);
+    }
+
+    protected function mockMailgun()
+    {
+        $mailgunMock = Mockery::mock(Mailgun::class);
+        $mailgunMock->shouldReceive('getList')->andReturn(new MailingList((object)[
+            'name' => '',
+            'description' => '',
+            'members_count' => '',
+            'address' => '',
+        ]));
+        $mailgunMock->shouldReceive('lists')->andReturn([]);
+        $this->app->instance(MailgunInterface::class, $mailgunMock);
+    }
+
+    /**
+     * @return Newsletter
+     */
+    protected function createNewsletter()
+    {
+        return factory(Newsletter::class)->create();
     }
 }
