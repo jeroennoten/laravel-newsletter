@@ -30,7 +30,8 @@
                     <tbody>
                     @foreach($newsletters as $newsletter)
                         <tr style="cursor: pointer;"
-                            onclick="location.href = '{{ route('admin.newsletters.show', $newsletter) }}';">
+                            onclick="location.href = '{{ route('admin.newsletters.show', $newsletter) }}';"
+                        >
                             <td>
                                 @if($newsletter['subject'])
                                     {{ $newsletter['subject'] }}
@@ -65,11 +66,13 @@
                             <td>
                                 <form method="post"
                                       action="{{ route('admin.newsletters.destroy', $newsletter) }}"
-                                      onsubmit="return confirm('Weet je zeker dat je deze nieuwsbrief wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.')"
                                 >
                                     {{ method_field('delete') }}
                                     {{ csrf_field() }}
-                                    <button id="deleteNewsletter{{ $newsletter->id }}Button" class="btn btn-danger btn-xs">
+                                    <button id="deleteNewsletter{{ $newsletter->id }}Button"
+                                            class="btn btn-danger btn-xs"
+                                            onclick="return confirmDeleteNewsletter(event)"
+                                    >
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </form>
@@ -85,4 +88,10 @@
 
 @section('js')
     @ckeditor('bodyField')
+    <script>
+        function confirmDeleteNewsletter(event) {
+            event.stopPropagation();
+            return confirm('Weet je zeker dat je deze nieuwsbrief wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.');
+        }
+    </script>
 @endsection
