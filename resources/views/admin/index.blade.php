@@ -66,6 +66,7 @@
                             <td>
                                 <form method="post"
                                       action="{{ route('admin.newsletters.destroy', $newsletter) }}"
+                                      style="display: inline"
                                 >
                                     {{ method_field('delete') }}
                                     {{ csrf_field() }}

@@ -36,11 +36,13 @@
                                 <form method="post"
                                       action="{{ route('admin.newsletters.lists.destroy', $list) }}"
                                       style="display: inline"
-                                      onsubmit="return confirm('Weet je zeker dat je de lijst \'{{ $list->name }}\' wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.')"
                                 >
                                     {{ method_field('delete') }}
                                     {{ csrf_field() }}
-                                    <button type="submit" class="btn btn-danger btn-xs">
+                                    <button type="submit"
+                                            class="btn btn-danger btn-xs"
+                                            onclick="return confirmDeleteList(event)"
+                                    >
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </form>
@@ -53,3 +55,12 @@
         </div>
     </div>
 @endsection
+
+@section('js')
+    <script>
+        function confirmDeleteList(event) {
+            event.stopPropagation();
+            return confirm('Weet je zeker dat je deze verzendlijst wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.');
+        }
+    </script>
+@append
