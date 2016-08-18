@@ -3,32 +3,7 @@
         <div v-if="adding">
             <p v-if="canAddMore">Klaar! <button class="btn btn-xs btn-success" @click="addMore">Meer leden toevoegen</button></p>
             <p v-else><strong>Toevoegen van addressen...</strong></p>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>E-mailadres</th>
-                    <th>Naam</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="address in addressesToAdd">
-                    <td>{{ address.email }}</td>
-                    <td>{{ address.name }}</td>
-                    <td>
-                        <span v-show="address.status == 'pending'">
-                            <i class="fa fa-spinner fa-pulse fa-fw"></i>
-                        </span>
-                        <span v-show="address.status == 'ok'" class="text-success">
-                            <i class="fa fa-check fa-fw"></i>
-                        </span>
-                        <span v-show="address.status == 'invalid'" class="text-danger">
-                            <i class="fa fa-times fa-fw"></i>
-                        </span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <add-members :addresses="addressesToAdd"></add-members>
         </div>
         <div class="add-form" v-else>
             <p>Voer een door komma's gescheiden lijst met e-mailadressen in, eventueel met namen. Extra spaties zijn
@@ -54,7 +29,7 @@
 
 <script>
     import emailAddresses from 'email-addresses';
-
+    import submitAddresses from '../submitAddresses';
 
     export default {
         props: ['listId'],
@@ -75,26 +50,16 @@
                 } else {
                     this.adding = true;
                     this.invalid = false;
-                    this.addressesToAdd = [];
+                    this.addressesToAdd = addresses.map(address => ({
+                        address: address.address,
+                        name: address.name,
+                        status: 'pending'
+                    }));
                     this.canAddMore = false;
-                    Promise.all(addresses.map(this.submitAddress)).then(() => {
+                    submitAddresses(this.listId, this.addressesToAdd).then(() => {
                         this.canAddMore = true;
                     });
                 }
-            },
-            submitAddress(address) {
-                let addressToAdd = {
-                    email: address.address,
-                    name: address.name,
-                    status: 'pending'
-                };
-                this.addressesToAdd.push(addressToAdd);
-                return this.$http.post(`${this.listId}/members`, {
-                    email: address.address,
-                    name: address.name
-                }).then(response => {
-                    addressToAdd.status = response.json().status;
-                });
             },
             addMore() {
                 this.addressList = '';

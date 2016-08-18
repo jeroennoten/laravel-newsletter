@@ -15,6 +15,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#addOneMember" data-toggle="tab">Enkel lid toevoegen</a></li>
             <li><a href="#addManyMembers" data-toggle="tab">Kommagescheiden lijst toevoegen</a></li>
+            <li><a href="#addMembersFile" data-toggle="tab">Excel-bestand uploaden</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="addOneMember">
@@ -42,6 +43,9 @@
             </div>
             <div class="tab-pane" id="addManyMembers">
                 <add-many-members list-id="{{ $list->getId() }}"></add-many-members>
+            </div>
+            <div class="tab-pane" id="addMembersFile">
+                <add-members-file list-id="{{ $list->getId() }}"></add-members-file>
             </div>
         </div>
     </div>

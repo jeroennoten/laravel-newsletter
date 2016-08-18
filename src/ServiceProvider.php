@@ -1,5 +1,6 @@
 <?php namespace JeroenNoten\LaravelNewsletter;
 
+use Collective\Bus\BusServiceProvider;
 use GuzzleHttp\Client as Guzzle;
 use Http\Adapter\Guzzle6\Client;
 use Illuminate\Contracts\Container\Container;
@@ -15,10 +16,8 @@ use JeroenNoten\LaravelNewsletter\Mailgun\CachingMailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
 use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits;
-use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Config;
-use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Migrations;
-use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\PublicAssets;
-use JeroenNoten\LaravelPackageHelper\ServiceProviderTraits\Views;
+use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\ExcelServiceProvider;
 use Mailgun\Mailgun as BaseMailgun;
 
 class ServiceProvider extends BaseServiceProvider
@@ -68,6 +67,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->register(AdminLteServiceProvider::class);
         $this->app->register(CkEditorServiceProvider::class);
         $this->app->register(FormatServiceProvider::class);
+        $this->app->register(BusServiceProvider::class);
+        $this->app->register(ExcelServiceProvider::class);
+
+        $this->app->alias('excel', Excel::class);
     }
 
     protected function path(): string
@@ -127,6 +130,8 @@ class ServiceProvider extends BaseServiceProvider
 
                 $router->post('/{list}/members', 'Members@store')->name('members.store');
                 $router->delete('/{list}/members/{member}', 'Members@destroy')->name('members.destroy');
+
+                $router->post('/parse', 'Parser@parse');
 
             });
 
