@@ -16,12 +16,6 @@ class Newsletter extends Model
 
     protected $fillable = ['subject', 'body', 'list_id'];
 
-    public function __construct(array $attributes = [])
-    {
-        $newsletter = parent::__construct();
-        return $newsletter;
-    }
-
     public function setListIdAttribute($value)
     {
         $this->attributes['list_id'] = $value;
