@@ -11,6 +11,7 @@ use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use JeroenNoten\LaravelAdminLte\ServiceProvider as AdminLteServiceProvider;
 use JeroenNoten\LaravelCkEditor\ServiceProvider as CkEditorServiceProvider;
 use JeroenNoten\LaravelFormat\ServiceProvider as FormatServiceProvider;
+use JeroenNoten\LaravelNewsletter\Counters\BriteVerifyCounter;
 use JeroenNoten\LaravelNewsletter\EmailValidation\BriteVerify;
 use JeroenNoten\LaravelNewsletter\Mailgun\CachingMailgun;
 use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
@@ -61,7 +62,11 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(MailgunInterface::class, CachingMailgun::class);
 
         $this->app->singleton(BriteVerify::class, function () {
-            return new BriteVerify(new Guzzle(), config('newsletter.brite_verify_secret'));
+            return new BriteVerify(
+                new Guzzle(),
+                config('newsletter.brite_verify_secret'),
+                $this->app->make(BriteVerifyCounter::class)
+            );
         });
 
         $this->app->register(AdminLteServiceProvider::class);

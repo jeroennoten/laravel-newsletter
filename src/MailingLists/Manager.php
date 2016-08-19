@@ -9,41 +9,20 @@ use JeroenNoten\LaravelNewsletter\Mailgun\MailingList;
 
 class Manager
 {
-    private $app;
+    private $default;
 
-    public function __construct(Application $app)
+    public function __construct(DefaultMailingListSetting $default)
     {
-        $this->app = $app;
+        $this->default = $default;
     }
 
     public function setDefaultId($listId)
     {
-        $path = $this->getDefaultSettingPath();
-
-        $this->ensureFolderExists($path);
-
-        file_put_contents($path, $listId);
+        $this->default->write($listId);
     }
 
     public function getDefaultId()
     {
-        $path = $this->getDefaultSettingPath();
-        if (!file_exists($path)) {
-            return null;
-        }
-        return file_get_contents($path);
-    }
-
-    private function getDefaultSettingPath()
-    {
-        return $this->app->storagePath() . DIRECTORY_SEPARATOR . 'newsletter/settings/default_list.txt';
-    }
-
-    private function ensureFolderExists($path)
-    {
-
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
-        }
+        return $this->default->read();
     }
 }
