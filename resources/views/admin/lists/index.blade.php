@@ -33,6 +33,28 @@
                             <td>{{ $list->description }}</td>
                             <td>{{ $list->membersCount }}</td>
                             <td>
+                                @if($defaultListId == $list->getId())
+                                    <button type="button" class="btn btn-success btn-xs" disabled>
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                @else
+                                    <form method="post"
+                                          action="{{ route('admin.newsletters.lists.default') }}"
+                                          style="display: inline"
+                                    >
+                                        {{ method_field('put') }}
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="id" value="{{ $list->getId() }}">
+                                        <button type="submit"
+                                                id="setDefaultMailingList{{ $list->getId() }}Button"
+                                                class="btn btn-default btn-xs"
+                                                title="Instellen als standaard"
+                                                data-toggle="tooltip"
+                                        >
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </form>
+                                @endif
                                 <form method="post"
                                       action="{{ route('admin.newsletters.lists.destroy', $list) }}"
                                       style="display: inline"

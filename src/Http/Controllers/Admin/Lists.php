@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
+use JeroenNoten\LaravelNewsletter\MailingLists\Manager;
 
 class Lists extends Controller
 {
@@ -21,18 +22,26 @@ class Lists extends Controller
 
     private $redirector;
 
-    public function __construct(MailgunInterface $mailgun, Factory $view, Redirector $redirector)
-    {
+    private $listManager;
+
+    public function __construct(
+        MailgunInterface $mailgun,
+        Factory $view,
+        Redirector $redirector,
+        Manager $listManager
+    ) {
         $this->middleware('auth');
         $this->mailgun = $mailgun;
         $this->view = $view;
         $this->redirector = $redirector;
+        $this->listManager = $listManager;
     }
 
     public function index()
     {
         $lists = $this->mailgun->lists();
-        return $this->view->make('newsletter::admin.lists.index', compact('lists'));
+        $defaultListId = $this->listManager->getDefaultId();
+        return $this->view->make('newsletter::admin.lists.index', compact('lists', 'defaultListId'));
     }
 
     public function show($listId)
@@ -69,6 +78,12 @@ class Lists extends Controller
         $list = $this->mailgun->updateList($listId, $request->input('name'), $request->input('description'));
 
         return $this->redirector->route('admin.newsletters.lists.show', $list);
+    }
+
+    public function setDefault(Request $request)
+    {
+        $this->listManager->setDefaultId($request->input('id'));
+        return $this->redirector->route('admin.newsletters.lists.index');
     }
 
     public function destroy($listId)

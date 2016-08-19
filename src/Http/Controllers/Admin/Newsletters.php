@@ -11,6 +11,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
 use JeroenNoten\LaravelNewsletter\Models\Newsletter;
+use JeroenNoten\LaravelNewsletter\Models\NewsletterFactory;
 
 class Newsletters extends Controller
 {
@@ -40,9 +41,9 @@ class Newsletters extends Controller
         return view('newsletter::admin.index', compact('newsletters'));
     }
 
-    public function create()
+    public function create(NewsletterFactory $factory)
     {
-        return $this->show(new Newsletter);
+        return $this->show($factory->make());
     }
 
     public function show(Newsletter $newsletter)

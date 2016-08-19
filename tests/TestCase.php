@@ -16,9 +16,9 @@ class TestCase extends BaseTestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
 
@@ -28,10 +28,10 @@ class TestCase extends BaseTestCase
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
-        $this->withFactories(__DIR__.'/../database/factories');
+        $this->withFactories(__DIR__ . '/../database/factories');
     }
 
     public function getPackageProviders($app)
@@ -51,10 +51,25 @@ class TestCase extends BaseTestCase
             'name' => '',
             'description' => '',
             'members_count' => '',
-            'address' => '',
+            'address' => '123@example.com',
         ]));
-        $mailgunMock->shouldReceive('lists')->andReturn([]);
+        $mailgunMock->shouldReceive('lists')->andReturn([
+            new MailingList((object)[
+                'name' => '',
+                'description' => '',
+                'members_count' => '',
+                'address' => '123@example.com',
+            ]),
+            new MailingList((object)[
+                'name' => '',
+                'description' => '',
+                'members_count' => '',
+                'address' => '456@example.com',
+            ])
+        ]);
         $this->app->instance(MailgunInterface::class, $mailgunMock);
+
+        return $mailgunMock;
     }
 
     /**

@@ -123,6 +123,7 @@ class ServiceProvider extends BaseServiceProvider
                 $router->get('/', 'Lists@index')->name('index');
                 $router->get('/create', 'Lists@create')->name('create');
                 $router->post('/', 'Lists@store')->name('store');
+                $router->put('/default', 'Lists@setDefault')->name('default');
                 $router->get('/{list}', 'Lists@show')->name('show');
                 $router->get('/{list}/edit', 'Lists@edit')->name('edit');
                 $router->put('/{list}', 'Lists@update')->name('update');
