@@ -148,11 +148,20 @@ class ServiceProvider extends BaseServiceProvider
     {
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             $event->menu->add([
-                'text' => 'Nieuwsbrieven versturen',
-                'url' => 'admin/newsletters',
-            ], [
-                'text' => 'Verzendlijsten',
-                'url' => 'admin/newsletter-lists',
+                'text' => 'Nieuwsbrieven',
+                'icon' => 'newspaper-o',
+                'submenu' => [
+                    [
+                        'text' => 'Nieuwsbrieven versturen',
+                        'url' => 'admin/newsletters',
+                        'icon' => 'send',
+                    ],
+                    [
+                        'text' => 'Verzendlijsten',
+                        'url' => 'admin/newsletter-lists',
+                        'icon' => 'list',
+                    ]
+                ]
             ]);
         });
     }
