@@ -68,14 +68,15 @@
                     frameborder="0"
                     name="preview"
                     allowtransparency="false"
-                    style="background: #fff"
             ></iframe>
         </div>
     </div>
     <style>
         iframe {
             border: 1px solid #999;
-            height: 100%
+            height: 100%;
+            background: #fff;
+            flex: 1;
         }
 
         .preview-container {
