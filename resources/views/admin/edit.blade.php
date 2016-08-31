@@ -75,6 +75,7 @@
         iframe {
             border: 1px solid #999;
             height: 100%;
+            width: 100%;
             background: #fff;
             flex: 1;
         }
