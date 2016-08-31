@@ -88,7 +88,6 @@
 @endsection
 
 @section('js')
-    @ckeditor('bodyField')
     <script>
         function confirmDeleteNewsletter(event) {
             event.stopPropagation();
