@@ -9,7 +9,7 @@ class NewsletterController extends Controller
     public function subscribe(Request $request, MailgunInterface $mailgun)
     {
         $list = config('newsletter.list');
-        $listId = last(explode('@', $list));
+        $listId = head(explode('@', $list));
         $mailgun->addMember($listId, $request->input('email'), '');
     }
 }
