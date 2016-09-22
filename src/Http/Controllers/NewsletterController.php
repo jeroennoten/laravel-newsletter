@@ -2,11 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
+use JeroenNoten\LaravelNewsletter\Mailgun\MailgunInterface;
 
 class NewsletterController extends Controller
 {
-    public function subscribe(Request $request, Mailgun $mailgun)
+    public function subscribe(Request $request, MailgunInterface $mailgun)
     {
         $list = config('newsletter.list');
         $listId = last(explode('@', $list));
