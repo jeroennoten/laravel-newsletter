@@ -2,17 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Mailgun\Mailgun;
+use JeroenNoten\LaravelNewsletter\Mailgun\Mailgun;
 
 class NewsletterController extends Controller
 {
     public function subscribe(Request $request, Mailgun $mailgun)
     {
         $list = config('newsletter.list');
-        $mailgun->post("lists/$list/members", [
-            'address' => $request->input('email'),
-            'subscribed' => 'yes',
-            'upsert' => 'yes'
-        ]);
+        $listId = last(explode('@', $list));
+        $mailgun->addMember($listId, $request->input('email'), '');
     }
 }
