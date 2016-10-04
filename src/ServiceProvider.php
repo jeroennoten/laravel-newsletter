@@ -134,6 +134,7 @@ class ServiceProvider extends BaseServiceProvider
                 $router->put('/{list}', 'Lists@update')->name('update');
                 $router->delete('/{list}', 'Lists@destroy')->name('destroy');
 
+                $router->get('/{list}/members', 'Members@index');
                 $router->post('/{list}/members', 'Members@store')->name('members.store');
                 $router->delete('/{list}/members/{member}', 'Members@destroy')->name('members.destroy');
 

@@ -12,11 +12,11 @@ class Member implements UrlRoutable
     public $name;
     public $subscribed;
 
-    public function __construct($data)
+    public function __construct(string $address, string $name = null, bool $subscribed = true)
     {
-        $this->address = $data->address;
-        $this->name = $data->name;
-        $this->subscribed = $data->subscribed;
+        $this->address = $address;
+        $this->name = $name;
+        $this->subscribed = $subscribed;
     }
 
     public function getRouteKey()

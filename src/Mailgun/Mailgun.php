@@ -68,8 +68,15 @@ class Mailgun implements MailgunInterface
 
     public function members($listId, $perPage = 20)
     {
-        return $this->getPaginated($this->listPath($listId, 'members'), $perPage, function ($data) {
-            return new Member($data);
+        return $this->getPaginated($this->listPath($listId, 'members'), $perPage, function ($item) {
+            return new Member($item->address, $item->name, $item->subscribed);
+        });
+    }
+
+    public function allMembers($listId): Collection
+    {
+        return $this->getAll($this->listPath($listId, 'members'))->map(function ($item) {
+            return new Member($item->address, $item->name, $item->subscribed);
         });
     }
 

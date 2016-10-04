@@ -64,44 +64,11 @@
             </h3>
         </div>
         <div class="box-body">
-            <div class="table-responsive">
-                <table class="table no-margin table-striped">
-                    <thead>
-                    <tr>
-                        <th>E-mailadres</th>
-                        <th>Naam</th>
-                        <th>Ingeschreven</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($members as $member)
-                        <tr>
-                            <td>{{ $member->address }}</td>
-                            <td>{{ $member->name }}</td>
-                            <td>{{ $member->subscribed ? 'Ja' : 'Nee' }}</td>
-                            <td>
-                                <form method="post"
-                                      action="{{ route('admin.newsletters.lists.members.destroy', [$list, $member]) }}"
-                                      style="display: inline"
-                                >
-                                    {{ method_field('delete') }}
-                                    {{ csrf_field() }}
-                                    <button type="submit" class="btn btn-danger btn-xs">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-                {{ $members->links() }}
-            </div>
+            <member-list list-id="{{ $list->getId() }}"></member-list>
         </div>
     </div>
 @endsection
 
 @section('js')
-    <script src="{{ asset('vendor/newsletter/js/app.js') }}"></script>
+    <script src="{{ asset('vendor/newsletter/js/app.js?v1') }}"></script>
 @append

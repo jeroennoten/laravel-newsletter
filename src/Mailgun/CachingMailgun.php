@@ -5,6 +5,7 @@ namespace JeroenNoten\LaravelNewsletter\Mailgun;
 
 
 use Illuminate\Cache\Repository;
+use Illuminate\Support\Collection;
 
 class CachingMailgun implements MailgunInterface
 {
@@ -39,6 +40,7 @@ class CachingMailgun implements MailgunInterface
 
         $this->cache->forget('newsletter::lists');
         $this->cache->forget("newsletter::lists.$listId");
+        $this->cache->forget("newsletter::lists.$listId.members");
 
         return $list;
     }
@@ -59,6 +61,7 @@ class CachingMailgun implements MailgunInterface
 
         $this->cache->forget('newsletter::lists');
         $this->cache->forget("newsletter::lists.$listId");
+        $this->cache->forget("newsletter::lists.$listId.members");
     }
 
     public function members($listId, $perPage = 20)
@@ -66,10 +69,18 @@ class CachingMailgun implements MailgunInterface
         return $this->mailgun->members($listId, $perPage);
     }
 
+    public function allMembers($listId): Collection
+    {
+        return $this->cache->rememberForever("newsletter::lists.$listId.members", function () use ($listId) {
+            return $this->mailgun->allMembers($listId);
+        });
+    }
+
     public function addMember($listId, $address, $name)
     {
         $this->cache->forget('newsletter::lists');
         $this->cache->forget("newsletter::lists.$listId");
+        $this->cache->forget("newsletter::lists.$listId.members");
         return $this->mailgun->addMember($listId, $address, $name);
     }
 
@@ -77,6 +88,7 @@ class CachingMailgun implements MailgunInterface
     {
         $this->cache->forget('newsletter::lists');
         $this->cache->forget("newsletter::lists.$listId");
+        $this->cache->forget("newsletter::lists.$listId.members");
         return $this->mailgun->deleteMember($listId, $memberAddress);
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace JeroenNoten\LaravelNewsletter\Http\Controllers\Admin;
-
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -19,10 +17,12 @@ class Members extends Controller
     private $mailgun;
 
     private $view;
+
     /**
      * @var Redirector
      */
     private $redirector;
+
     /**
      * @var EmailValidator
      */
@@ -41,15 +41,21 @@ class Members extends Controller
         $this->emailValidator = $emailValidator;
     }
 
+    public function index($listId)
+    {
+        return $this->mailgun->allMembers($listId);
+    }
+
     public function store($listId, Request $request)
     {
         $email = $request->input('email');
         $name = $request->input('name');
 
-        if (!$this->emailValidator->isValid($email)) {
+        if (! $this->emailValidator->isValid($email)) {
             if ($request->wantsJson()) {
                 return ['status' => 'invalid'];
             }
+
             return $this->redirector->back()->withInput()->withErrors(['Ongeldig e-mailadres']);
         }
 
@@ -58,12 +64,18 @@ class Members extends Controller
         if ($request->wantsJson()) {
             return ['status' => 'ok'];
         }
+
         return $this->redirectToList($listId);
     }
 
-    public function destroy($listId, $memberAddress)
+    public function destroy($listId, $memberAddress, Request $request)
     {
         $this->mailgun->deleteMember($listId, $memberAddress);
+
+        if ($request->wantsJson()) {
+            return ['status' => 'ok'];
+        }
+
         return $this->redirectToList($listId);
     }
 
