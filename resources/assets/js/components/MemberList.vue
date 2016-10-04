@@ -1,7 +1,7 @@
 <template>
     <div v-if="loading" class="text-center"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
     <div v-else>
-        <input class="form-control" style="max-width: 200px;" v-model="search" placeholder="Zoeken">
+        <input class="form-control" style="max-width: 200px;" v-model="search" debounce="300" placeholder="Zoeken">
         <table class="table no-margin table-striped">
             <thead>
             <tr>
