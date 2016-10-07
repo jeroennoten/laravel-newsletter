@@ -48,8 +48,8 @@ class Members extends Controller
 
     public function store($listId, Request $request)
     {
-        $email = $request->input('email');
-        $name = $request->input('name');
+        $email = trim($request->input('email'));
+        $name = trim($request->input('name'));
 
         if (! $this->emailValidator->isValid($email)) {
             if ($request->wantsJson()) {

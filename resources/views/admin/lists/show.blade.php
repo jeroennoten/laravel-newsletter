@@ -19,6 +19,13 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="addOneMember">
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                            <div>{{ $error }}</div>
+                        @endforeach
+                    </div>
+                @endif
                 <form method="post"
                       action="{{ route('admin.newsletters.lists.members.store', $list) }}"
                       style="display: flex;"
