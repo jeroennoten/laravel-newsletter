@@ -17,7 +17,7 @@
                 <td>{{ member.name }}</td>
                 <td>{{ member.subscribed ? 'Ja' : 'Nee' }}</td>
                 <td>
-                    <delete-button @delete="deleteMember($index)"></delete-button>
+                    <delete-button @delete="deleteMember(member.address)"></delete-button>
                 </td>
             </tr>
             </tbody>
@@ -49,9 +49,9 @@
             }
         },
         methods: {
-            deleteMember(i) {
-                this.$http.delete(`/admin/newsletter-lists/${this.listId}/members/${this.members[i].address}`).then(() => {
-                    this.members.splice(i, 1);
+            deleteMember(address) {
+                this.$http.delete(`/admin/newsletter-lists/${this.listId}/members/${address}`).then(() => {
+                    this.members = this.members.filter(member => member.address != address);
                 });
             }
         }
