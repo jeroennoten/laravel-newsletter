@@ -4,7 +4,7 @@
             <p>Zorg dat het Excel-bestand aan de volgende eisen voldoet:</p>
             <ul>
                 <li>De eerste kolom bevat namen.</li>
-                <li>De eerste kolom bevat e-mailadressen.</li>
+                <li>De twee kolom bevat e-mailadressen.</li>
                 <li>De eerste rij zijn koppen (en wordt dus genegeerd).</li>
             </ul>
             <form enctype="multipart/form-data" v-el:form @submit.prevent="submit">
