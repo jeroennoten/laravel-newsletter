@@ -3,8 +3,8 @@
         <div v-if="!adding">
             <p>Zorg dat het Excel-bestand aan de volgende eisen voldoet:</p>
             <ul>
-                <li>De eerste kolom bevat namen.</li>
-                <li>De twee kolom bevat e-mailadressen.</li>
+                <li>De eerste kolom bevat e-mailadressen.</li>
+                <li>De tweede kolom bevat namen (optioneel).</li>
                 <li>De eerste rij zijn koppen (en wordt dus genegeerd).</li>
             </ul>
             <form enctype="multipart/form-data" v-el:form @submit.prevent="submit">
@@ -49,8 +49,8 @@
                     this.uploading = false;
                     this.adding = true;
                     this.addresses = response.data.map(row => ({
+                        address: row[0],
                         name: row[1],
-                        address: row[2],
                         status: 'pending',
                     }));
                     return submitAddresses(this.listId, this.addresses);
