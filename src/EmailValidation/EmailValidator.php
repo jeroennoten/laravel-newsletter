@@ -27,6 +27,6 @@ class EmailValidator
             return false;
         }
 
-        return $this->briteVerify->verify($email)->status == 'valid';
+        return in_array($this->briteVerify->verify($email)->status, ['valid', 'accept_all']);
     }
 }
