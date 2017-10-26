@@ -42,7 +42,6 @@
                 this.members = response.json();
                 this.loading = false;
             });
-            console.log(this.membersFiltered)
         },
         computed: {
             membersFiltered() {
