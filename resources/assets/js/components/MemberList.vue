@@ -39,9 +39,10 @@
         },
         ready() {
             this.$http.get(`/admin/newsletter-lists/${this.listId}/members`).then(response => {
-                this.members = response.data;
+                this.members = response.json();
                 this.loading = false;
             });
+            console.log(this.membersFiltered)
         },
         computed: {
             membersFiltered() {
