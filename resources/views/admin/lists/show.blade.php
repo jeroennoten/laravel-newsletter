@@ -77,5 +77,5 @@
 @endsection
 
 @section('js')
-    <script src="{{ asset('vendor/newsletter/js/app.js?v1') }}"></script>
+    <script src="{{ asset('vendor/newsletter/js/app.js?v2') }}"></script>
 @append
