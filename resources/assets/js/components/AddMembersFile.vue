@@ -48,7 +48,7 @@
                 this.$http.post('/admin/newsletter-lists/parse', data).then(response => {
                     this.uploading = false;
                     this.adding = true;
-                    this.addresses = response.data.map(row => ({
+                    this.addresses = JSON.parse(response.body).map(row => ({
                         address: row[0],
                         name: row[1],
                         status: 'pending',
