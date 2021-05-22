@@ -48,7 +48,8 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(BaseMailgun::class, function () {
             return new BaseMailgun(
                 config('services.mailgun.secret'),
-                new Client()
+                new Client(),
+                config('services.mailgun.api_endpoint', 'api.mailgun.net')
             );
         });
 
